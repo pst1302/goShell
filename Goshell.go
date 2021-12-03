@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
 
 func main() {
 
@@ -10,12 +14,14 @@ func main() {
 	for {
 		cmd := ""
 		fmt.Print("goShell > ")
-		fmt.Scanln(&cmd)
+		reader := bufio.NewReader(os.Stdin)
+		input, _ := reader.ReadString('\n')
 
-		if cmd == "exit" {
+		cmd = string([]byte(input))
+		if cmd == "exit\n" {
 			break
 		}
-		if cmd == "" {
+		if cmd == "\n" {
 			continue
 		}
 
