@@ -18,7 +18,7 @@ func ParsingCmd(cmd string) {
 	}
 
 	if splitedCmd[0] == "ls\n" {
-		Ls_cmd_handler("")
+		Ls_cmd_handler(curLocal)
 	} else if splitedCmd[0] == "ls" {
 		if len(splitedCmd) == 2 {
 			Ls_cmd_handler(splitedCmd[1])
@@ -26,25 +26,21 @@ func ParsingCmd(cmd string) {
 	}
 }
 
-func Ls_cmd_handler(addedString string) {
+func Ls_cmd_handler(arg string) {
 
-	if addedString != "" {
-		if strings.HasPrefix(addedString, "-") {
+	if arg != "" {
+		if strings.HasPrefix(arg, "-") {
 			// arg is option
 			fmt.Println("arg is option")
 		} else {
 			// arg is path
-			fmt.Println("arg is path : " + addedString)
+			//fmt.Println("arg is path : " + arg)
 
-			fmt.Println(GetFilesFromDir(addedString))
+			fmt.Println(GetFilesFromDir(arg))
 		}
 	} else {
-		ex, err := os.Executable()
-		if err != nil {
-			//
-		}
 
-		fmt.Println(GetFilesFromDir(ex))
+		fmt.Println(GetFilesFromDir(curLocal))
 	}
 }
 
@@ -54,29 +50,23 @@ func GetFilesFromDir(dir string) string {
 
 	fileInfo, err := os.Stat(dir)
 	if err != nil {
-		// error handling
-		fmt.Println("There is something problem")
-		if os.IsNotExist(err) {
-			dir += "/"
-			fileInfo, err := os.Stat(dir)
-
-			fmt.Println("dir ::: " + dir)
-			if err != nil {
-				return "There is some problem while reading directory"
-			}
-
-			if !fileInfo.IsDir() {
-				return "There is some problem while reading directory"
-			}
-		}
+		// Error handling
 	}
 
+	exPath := ""
 	if fileInfo != nil {
-		fmt.Println("file Info isn't nil")
-		dir += "/"
+		fmt.Println("fileInfo is not null")
+		if fileInfo.IsDir() {
+			fmt.Println("It is dir")
+			exPath = dir + "/"
+		} else {
+			fmt.Println("It is file")
+			exPath = filepath.Dir(dir)
+		}
+	} else {
+		fmt.Print(dir + " is not file or directory.")
+		//exPath = filepath.Dir(dir)
 	}
-
-	exPath := filepath.Dir(dir)
 
 	files, err := ioutil.ReadDir(exPath)
 	if err != nil {
